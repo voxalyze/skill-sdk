@@ -5,7 +5,7 @@
     "Marian Zange <marian@5to3.io>"
   ],
   "license": "Apache-2.0",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": "github:voxalyze/skill-sdk",
   "homepage": "https://www.voxalyze.com",
   "description": "Reports Alexa skill usage data to Voxalyze. Supports ASK-SDK v2 and generic Lambda handler functions.",
