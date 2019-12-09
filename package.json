@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "version": "0.0.2",
   "repository": "github:voxalyze/skill-sdk",
-  "homepage": "https://www.voxalyze.com",
+  "homepage": "https://voxalyze.com",
   "description": "Reports Alexa skill usage data to Voxalyze. Supports ASK-SDK v2 and generic Lambda handler functions.",
   "keywords": [
     "alexa",
