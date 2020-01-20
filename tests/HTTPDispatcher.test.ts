@@ -9,8 +9,8 @@ import {
 
 jest.mock('axios');
 
-let mockedAxios = axios as jest.Mocked<typeof axios>;
-let mockedErrConsole = jest.spyOn(global.console, 'error');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockedErrConsole = jest.spyOn(global.console, 'error');
 
 beforeEach(() => {
   mockedAxios.post.mockReset();
@@ -31,7 +31,7 @@ test('Reveive a 401 response from the collector', async () => {
   mockedAxios.post.mockRejectedValueOnce(response401);
   mockedErrConsole.mockImplementationOnce(message => {
     expect(message).toMatch(
-      '[VoxalyzeSDK][ERROR] HTTP dispatch failed with status 401'
+      '[VoxalyzeSDK][ERROR] HTTP dispatch failed: 401 Unauthorized'
     );
   });
 
@@ -45,7 +45,7 @@ test('Reveive a 500 response from the collector', async () => {
   mockedAxios.post.mockRejectedValueOnce(response500);
   mockedErrConsole.mockImplementationOnce(message => {
     expect(message).toMatch(
-      '[VoxalyzeSDK][ERROR] HTTP dispatch failed with status 500'
+      '[VoxalyzeSDK][ERROR] HTTP dispatch failed: 500 Internal Server Error'
     );
   });
 

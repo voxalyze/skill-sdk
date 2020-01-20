@@ -1,6 +1,6 @@
 import { RequestHandler, HandlerInput } from 'ask-sdk-core';
-import { InvalidHandlerError } from './Errors';
 import debugLib from 'debug';
+import { InvalidHandlerError } from './Errors';
 import { config } from './config';
 
 /**
@@ -36,11 +36,15 @@ function isAskSDKList(o: any): o is RequestHandler {
  * @param handler The handler function to invoke
  * @param input Handler input data
  */
-async function askHandler(this: any, handler: Function, input: HandlerInput) {
+async function askHandler(
+  this: any,
+  handler: Function,
+  input: HandlerInput
+): Promise<any> {
   debug('Invoking wrapped ASK handler');
 
   const res = await Promise.all([
-    config.dispatcher!.send(input.requestEnvelope),
+    config.dispatch(input.requestEnvelope),
     handler.call(this, input),
   ]);
 
@@ -61,11 +65,11 @@ function wrapAsk(origHandler: RequestHandler): RequestHandler {
   if (!isAskSDKList(origHandler)) throw new InvalidHandlerError();
 
   return {
-    canHandle: async function(this: any, input: HandlerInput) {
+    async canHandle(this: any, input: HandlerInput): Promise<any> {
       debug('Invoking wrapped ASK canHandle function');
       return origHandler.canHandle.call(this, input);
     },
-    handle: async function(this: any, input: HandlerInput) {
+    async handle(this: any, input: HandlerInput): Promise<any> {
       return askHandler.call(this, origHandler.handle, input);
     },
   };
@@ -80,7 +84,7 @@ function wrapAsk(origHandler: RequestHandler): RequestHandler {
 function wrapAskSingle(origHandler: Function): Function {
   debug('Wrapping single ASK handler function');
 
-  return async function(this: any, input: HandlerInput) {
+  return async function(this: any, input: HandlerInput): Promise<any> {
     return askHandler.call(this, origHandler, input);
   };
 }
@@ -130,8 +134,9 @@ function wrapAskSingle(origHandler: Function): Function {
  * @returns The expected handler function output for ASK-SDK
  */
 export const track = (...args: WrapperInput[]): WrapperOutput => {
-  if (args.length === 1 && !isAskSDKList(args[0]))
+  if (args.length === 1 && !isAskSDKList(args[0])) {
     return wrapAskSingle(args[0]);
+  }
 
   let askHandlers = args as RequestHandler[];
   askHandlers = askHandlers.map(wrapAsk);

@@ -1,6 +1,6 @@
 import * as AWSMock from 'aws-sdk-mock';
 import { ResponseEnvelope } from 'ask-sdk-model';
-import { trackLambda, voxalyzeConfig } from '../src';
+import sdk from '../src';
 import testResponse from './fixtures/skillTestResponse';
 import launchRequest from './fixtures/launchRequest';
 
@@ -8,14 +8,14 @@ AWSMock.mock('SQS', 'sendMessage', (_params: any, cb: Function) => {
   cb(null, {});
 });
 
-voxalyzeConfig.init({ sqsQueue: 'http://localhost' });
+sdk.config.init({ sqsQueue: 'http://localhost' });
 
 test('Wrap async handler function with success response', async () => {
   async function testHandler(_event: any): Promise<any> {
     return testResponse;
   }
 
-  const res = await trackLambda(testHandler)(launchRequest);
+  const res = await sdk.trackLambda(testHandler)(launchRequest);
 
   expect(res).toMatchObject(testResponse);
 });
@@ -28,21 +28,21 @@ test('Wrap async handler function with exception', async () => {
   }
 
   try {
-    await trackLambda(testHandler)(launchRequest);
+    await sdk.trackLambda(testHandler)(launchRequest);
   } catch (e) {
     expect(e).toMatchObject(mockError);
   }
 });
 
 test('Wrap callback handler function with success response', async () => {
-  function testHandler(_event: any, _context: any, cb: Function) {
+  function testHandler(_event: any, _context: any, cb: Function): any {
     cb(null, testResponse);
   }
 
-  const res = await trackLambda(testHandler)(
+  const res = await sdk.trackLambda(testHandler)(
     launchRequest,
-    {},
-    (_err: Error, _res: ResponseEnvelope) => {
+    undefined,
+    (_err: any, _res: ResponseEnvelope) => {
       throw new Error('Should not be called');
     }
   );
@@ -53,15 +53,15 @@ test('Wrap callback handler function with success response', async () => {
 test('Wrap callback handler function with error response', async () => {
   const mockError = new Error('MockError');
 
-  function testHandler(_event: any, _context: any, cb: Function) {
+  function testHandler(_event: any, _context: any, cb: Function): any {
     cb(mockError, null);
   }
 
   try {
-    await trackLambda(testHandler)(
+    await sdk.trackLambda(testHandler)(
       launchRequest,
-      {},
-      (_err: Error, _res: ResponseEnvelope) => {
+      undefined,
+      (_err: any, _res: ResponseEnvelope) => {
         throw new Error('Should not be called');
       }
     );

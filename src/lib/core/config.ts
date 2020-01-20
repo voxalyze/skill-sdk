@@ -2,6 +2,7 @@ import Dispatcher from '../dispatchers/Dispatcher';
 import SQSDispatcher from '../dispatchers/SQSDispatcher';
 import HTTPDispatcher from '../dispatchers/HTTPDispatcher';
 import { InvalidConfigurationError } from './Errors';
+import log from './log';
 
 export interface VoxalyzeSDKOptions {
   sqsQueue?: string;
@@ -33,13 +34,22 @@ export class Config {
     this.setDispatcher(true);
   }
 
-  init(opts: VoxalyzeSDKOptions) {
+  init(opts: VoxalyzeSDKOptions): void {
     this.sqsQueue = opts.sqsQueue;
     this.apiKey = opts.apiKey;
     this.setDispatcher();
   }
 
-  private setDispatcher(initial = false) {
+  async dispatch(input: any): Promise<void> {
+    if (!this.dispatcher) {
+      log.error(`No valid event dispatcher has been set`);
+      return;
+    }
+
+    return this.dispatcher.send(input);
+  }
+
+  private setDispatcher(initial = false): void {
     if (this.sqsQueue) {
       this.dispatcher = new SQSDispatcher(this.sqsQueue);
     } else if (!initial || this.apiKey) {

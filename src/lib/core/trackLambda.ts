@@ -20,7 +20,7 @@ function promisifiedHandler(
   origHandler: any,
   event: any,
   context?: AWSLambda.Context
-) {
+): any {
   debug('Promisifying callback style handler');
   return new Promise((resolve, reject) => {
     origHandler(event, context, (err: Error, res: any) => {
@@ -38,7 +38,7 @@ function promisifiedHandler(
  *
  * @param origHandler The original handler
  */
-export const trackLambda = (origHandler: any) => {
+export const trackLambda = (origHandler: any): any => {
   debug('Wrapping Lambda handler function');
 
   const isAsync = origHandler.constructor.name === 'AsyncFunction';
@@ -51,7 +51,7 @@ export const trackLambda = (origHandler: any) => {
     debug('Invoking wrapped Lambda handler');
 
     const res = await Promise.all([
-      config.dispatcher!.send(event),
+      config.dispatch(event),
       isAsync
         ? origHandler(event, context)
         : promisifiedHandler(origHandler, event, context),
