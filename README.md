@@ -2,7 +2,7 @@
 
 # Voxalyze SDK for Alexa Skills
 
-![npm (scoped)](https://img.shields.io/npm/v/@voxalyze/skill-sdk?style=flat-square) ![GitHub](https://img.shields.io/github/license/voxalyze/skill-sdk?style=flat-square)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/voxalyze/skill-sdk/Node.js%20CI/master?style=flat-square) ![npm (scoped)](https://img.shields.io/npm/v/@voxalyze/skill-sdk?style=flat-square) ![GitHub](https://img.shields.io/github/license/voxalyze/skill-sdk?style=flat-square)
 
 With Voxalyze, you can get real-time reports and insights about your Alexa skill visitors on multiple dimensions. This SDK reports meta-data from your Alexa Skill to our API. We match the data received from your skill with data we collect through our campaign proxy. This allows us to track where your visitors come from and which of your campaigns perform best.
 
